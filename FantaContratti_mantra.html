@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FantaContratti — FantaZenaMilano</title>
+<style>
+:root{--bg:#0f1419;--panel:#171e27;--panel2:#1e2833;--line:#2a3643;--txt:#e8eef5;--muted:#8fa3b8;
+--acc:#3ddc84;--acc2:#4aa8ff;--warn:#ffb020;--dang:#ff5a5a;--P:#ffb020;--D:#4aa8ff;--C:#3ddc84;--A:#ff5a5a}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--txt)}
+header{background:var(--panel);border-bottom:1px solid var(--line);padding:12px 16px;position:sticky;top:0;z-index:20}
+.hrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+h1{font-size:18px;margin:0;font-weight:700}h1 span{color:var(--acc)}
+.badge{background:var(--panel2);border:1px solid var(--line);padding:3px 10px;border-radius:20px;font-size:12px;color:var(--muted)}
+nav{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+nav button{background:transparent;border:1px solid var(--line);color:var(--muted);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:13px}
+nav button.on{background:var(--acc);border-color:var(--acc);color:#06210f;font-weight:600}
+main{padding:16px;max-width:1400px;margin:0 auto}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.card h2{margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:14px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;padding:4px 5px;border-bottom:1px solid var(--line)}
+td{padding:4px 5px;border-bottom:1px solid #212c38}
+.rm{display:inline-flex;gap:2px}
+.rm b{display:inline-block;min-width:21px;height:19px;line-height:19px;text-align:center;border-radius:5px;
+  font-size:10.5px;font-weight:800;color:#0d1117;padding:0 3px}
+.g-P{background:var(--P)}.g-D{background:var(--D)}.g-C{background:var(--C)}.g-A{background:var(--A)}
+.yrs{font-weight:700;padding:1px 7px;border-radius:20px;font-size:12px}
+.y3{background:#14331f;color:var(--acc)}.y2{background:#13293d;color:var(--acc2)}
+.y1{background:#3a2b0d;color:var(--warn)}.y0{background:#3d1616;color:var(--dang)}
+input,select{background:var(--panel2);border:1px solid var(--line);color:var(--txt);padding:7px 9px;border-radius:8px;font-size:13.5px;font-family:inherit}
+input:focus,select:focus{outline:1px solid var(--acc2)}
+button.b{background:var(--acc);color:#06210f;border:0;padding:9px 15px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13.5px}
+button.b.sec{background:var(--panel2);color:var(--txt);border:1px solid var(--line)}
+button.b.dang{background:var(--dang);color:#fff}
+button.x{background:none;border:0;color:var(--muted);cursor:pointer;font-size:14px;padding:1px 4px}
+button.x:hover{color:var(--acc)}
+a.tm{color:var(--muted);text-decoration:none;font-size:13px}a.tm:hover{color:var(--acc2)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+.muted{color:var(--muted);font-size:13px}
+.teamhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}
+.teamhead b{font-size:16px}
+.exp{background:#3d1616;outline:1px solid #6b2626}
+.pill{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:5px 9px;font-size:12.5px;display:inline-block}
+.log{max-height:460px;overflow:auto;font-size:13px}
+.log div{padding:6px 0;border-bottom:1px solid #212c38}
+label.lbl{font-size:11.5px;color:var(--muted);display:block;margin-bottom:3px}
+.f{display:flex;flex-direction:column}
+.swapbox{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px;max-height:360px;overflow:auto}
+.swapbox label{display:flex;gap:7px;align-items:center;padding:3px 2px;cursor:pointer;font-size:13px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:780px){.two{grid-template-columns:1fr}}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--acc);color:#06210f;padding:10px 20px;border-radius:24px;font-weight:700;z-index:99}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:var(--muted)}
+.dot.ok{background:var(--acc)}.dot.err{background:var(--dang)}
+.vin{width:58px;text-align:right}
+.legend b{margin-right:2px}
+ol.help li{margin-bottom:6px}
+code{background:var(--panel2);padding:2px 6px;border-radius:5px;font-size:12.5px}
+</style>
+</head>
+<body>
+<header>
+  <div class="hrow">
+    <h1>Fanta<span>Contratti</span></h1>
+    <span class="badge" id="bLega">—</span><span class="badge" id="bStag">—</span>
+    <span style="flex:1"></span>
+    <span class="badge"><span class="dot" id="dot"></span> <span id="syncTxt">locale</span></span>
+    <button class="b sec" onclick="cloudLoad(1)">⬇ Carica</button>
+    <button class="b" onclick="cloudSave(1)">⬆ Salva</button>
+  </div>
+  <nav>
+    <button data-t="rose" class="on">Rose</button>
+    <button data-t="asta">Asta / Acquisti</button>
+    <button data-t="scambi">Scambi</button>
+    <button data-t="valori">Valori Transfermarkt</button>
+    <button data-t="stagione">Fine stagione</button>
+    <button data-t="storico">Storico</button>
+    <button data-t="setup">Impostazioni</button>
+  </nav>
+</header>
+<main>
+
+<section id="t-rose">
+  <div class="card">
+    <div class="row">
+      <div class="f"><label class="lbl">Cerca giocatore</label><input id="q" placeholder="nome…" oninput="render()" size="16"></div>
+      <div class="f"><label class="lbl">Ruolo mantra</label><select id="fRole" onchange="render()"></select></div>
+      <div class="f"><label class="lbl">Contratti</label><select id="fYr" onchange="render()"><option value="">Tutti</option><option value="0">Scaduti (0)</option><option value="1">In scadenza 2027</option><option value="2">Fino al 2028</option><option value="3">Fino al 2029</option></select></div>
+      <div class="f"><label class="lbl">Ordina per</label><select id="fSort" onchange="render()"><option value="ruolo">Ruolo mantra</option><option value="anni">Scadenza</option><option value="valore">Valore</option><option value="club">Squadra Serie A</option><option value="nome">Nome</option></select></div>
+      <div class="f"><label class="lbl">Legenda</label><div class="pill legend"><span class="rm"><b class="g-P">Por</b><b class="g-D">Dif</b><b class="g-C">Cen</b><b class="g-A">Att</b></span></div></div>
+    </div>
+  </div>
+  <div class="card"><h2>Crediti residui</h2><div id="credBox"></div></div>
+  <div id="roseBox"></div>
+</section>
+
+<section id="t-asta" hidden>
+  <div class="card">
+    <h2>Acquisto in asta (estiva o invernale)</h2>
+    <p class="muted">Ogni giocatore acquistato riceve automaticamente <b>3 anni</b> di contratto.</p>
+    <div class="row">
+      <div class="f"><label class="lbl">Squadra</label><select id="aTeam"></select></div>
+      <div class="f"><label class="lbl">Giocatore</label><input id="aName" placeholder="Es. Lautaro" size="15"></div>
+      <div class="f"><label class="lbl">Ruolo mantra</label><input id="aRm" placeholder="Es. Dd;E oppure Pc" size="12"></div>
+      <div class="f"><label class="lbl">Squadra Serie A</label><input id="aClub" placeholder="Inter" size="10"></div>
+      <div class="f"><label class="lbl">Crediti spesi</label><input id="aCost" type="number" value="1" min="0" style="width:95px"></div>
+      <div class="f"><label class="lbl">Valore M€</label><input id="aVal" type="number" step="0.1" style="width:85px"></div>
+      <div class="f"><label class="lbl">Sessione</label><select id="aSess"><option>Asta estiva</option><option>Asta invernale</option><option>Svincolato preso</option></select></div>
+      <div class="f"><label class="lbl">Anni</label><select id="aYears"><option selected>3</option><option>2</option><option>1</option></select></div>
+      <div class="f"><button class="b" onclick="acquista()">+ Aggiungi</button></div>
+    </div>
+    <p class="muted" style="margin-bottom:0">Ruoli mantra validi: <code>Por Dc Dd Ds B E M C T W A Pc</code> — separali con il punto e virgola.</p>
+  </div>
+  <div class="card"><h2>Svincolati / fuori rosa</h2><div id="freeList" class="muted">Nessuno.</div></div>
+</section>
+
+<section id="t-scambi" hidden>
+  <div class="card">
+    <h2>Scambio fra presidenti</h2>
+    <p class="muted">Tutti i giocatori coinvolti ripartono con <b>3 anni</b> di contratto.</p>
+    <div class="two">
+      <div><div class="f" style="margin-bottom:8px"><label class="lbl">Squadra A</label><select id="sA" onchange="renderSwap()"></select></div><div class="swapbox" id="boxA"></div></div>
+      <div><div class="f" style="margin-bottom:8px"><label class="lbl">Squadra B</label><select id="sB" onchange="renderSwap()"></select></div><div class="swapbox" id="boxB"></div></div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <div class="f"><label class="lbl">Bilancio valori selezionati</label><div class="pill" id="swapBal">—</div></div>
+      <div class="f"><label class="lbl">Conguaglio crediti da A a B</label><input id="sCred" type="number" value="0" style="width:110px"></div>
+      <div class="f"><button class="b" onclick="scambia()">⇄ Esegui scambio</button></div>
+    </div>
+  </div>
+</section>
+
+<section id="t-valori" hidden>
+  <div class="card">
+    <h2>Valori di mercato (Transfermarkt)</h2>
+    <p class="muted">I valori si inseriscono a mano: Transfermarkt non espone un'API pubblica gratuita.
+    Usa il link 🔎 per aprire la scheda del giocatore, poi scrivi il valore in milioni. Si salva da solo.</p>
+    <div class="row" style="margin-bottom:10px">
+      <div class="f"><label class="lbl">Squadra</label><select id="vTeam" onchange="renderVal()"></select></div>
+      <div class="f"><label class="lbl">Mostra</label><select id="vFilter" onchange="renderVal()"><option value="all">Tutti</option><option value="empty">Solo senza valore</option></select></div>
+      <div class="f"><button class="b sec" onclick="exportValCSV()">⬇ Scarica modello CSV</button></div>
+      <div class="f"><label class="b sec" style="cursor:pointer;padding:9px 15px">⬆ Importa valori CSV<input type="file" hidden accept=".csv" onchange="importValCSV(this)"></label></div>
+    </div>
+    <div id="valBox"></div>
+  </div>
+  <div class="card"><h2>Classifica valore rose</h2><div id="valRank"></div></div>
+</section>
+
+<section id="t-stagione" hidden>
+  <div class="card">
+    <h2>Chiusura stagione</h2>
+    <p class="muted">Scala di 1 anno il contratto di tutti i giocatori di tutte le rose e avanza la stagione.
+    Chi arriva a 0 resta in rosso: va svincolato o scambiato (lo scambio lo riporta a 3 anni).</p>
+    <div class="row">
+      <button class="b" onclick="fineStagione()">▶ Chiudi stagione <span id="curSeason"></span></button>
+      <button class="b sec" onclick="annullaStagione()">↩ Annulla ultima chiusura</button>
+      <button class="b dang" onclick="svincolaScaduti()">🧹 Svincola tutti i contratti a 0</button>
+    </div>
+  </div>
+  <div class="card"><h2>Contratti scaduti (0 anni)</h2><div id="scad0" class="muted"></div></div>
+  <div class="card"><h2>In scadenza a fine stagione</h2><div id="scad" class="muted"></div></div>
+</section>
+
+<section id="t-storico" hidden>
+  <div class="card">
+    <h2>Storico movimenti</h2>
+    <div class="row" style="margin-bottom:10px">
+      <input id="fLog" placeholder="filtra…" oninput="renderLog()" size="22">
+      <button class="b sec" onclick="exportCSV()">⬇ Esporta rose CSV</button>
+      <button class="b sec" onclick="exportJSON()">⬇ Backup JSON</button>
+      <label class="b sec" style="cursor:pointer;padding:9px 15px">⬆ Ripristina JSON<input type="file" hidden accept=".json" onchange="importJSON(this)"></label>
+    </div>
+    <div class="log" id="logBox"></div>
+  </div>
+</section>
+
+<section id="t-setup" hidden>
+  <div class="card">
+    <h2>Lega</h2>
+    <div class="row">
+      <div class="f"><label class="lbl">Nome lega</label><input id="cfgLega" size="22"></div>
+      <div class="f"><label class="lbl">Stagione corrente</label><input id="cfgStag" size="9"></div>
+      <div class="f"><label class="lbl">Anni contratto standard</label><input id="cfgAnni" type="number" min="1" max="5" style="width:70px"></div>
+      <div class="f"><button class="b" onclick="saveCfg()">Salva</button></div>
+    </div>
+  </div>
+  <div class="card"><h2>Squadre / presidenti</h2><table id="tTeams"></table>
+    <div class="row" style="margin-top:10px">
+      <input id="nTeam" placeholder="Nome squadra" size="16"><input id="nPres" placeholder="Presidente" size="14">
+      <input id="nCred" type="number" value="0" style="width:90px" placeholder="Crediti">
+      <button class="b" onclick="addTeam()">+ Aggiungi</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Condivisione fra gli 8 presidenti (gratis)</h2>
+    <ol class="help muted">
+      <li>Su <code>firebase.google.com</code> crea un progetto gratuito (piano Spark) e attiva <b>Realtime Database</b> in modalità test.</li>
+      <li>Copia qui l'URL del database e scegli un codice lega uguale per tutti.</li>
+      <li>Metti il file su GitHub Pages: ogni presidente apre lo stesso link e vede le stesse rose.</li>
+    </ol>
+    <div class="row">
+      <div class="f" style="flex:1;min-width:300px"><label class="lbl">URL database</label><input id="cfgUrl" style="width:100%" placeholder="https://progetto-default-rtdb.europe-west1.firebasedatabase.app"></div>
+      <div class="f"><label class="lbl">Codice lega</label><input id="cfgCode" placeholder="fantazena" size="12"></div>
+      <div class="f"><label class="lbl">Sync auto</label><select id="cfgAuto"><option value="1">Sì</option><option value="0">No</option></select></div>
+      <div class="f"><button class="b" onclick="saveSync()">Collega</button></div>
+    </div>
+  </div>
+  <div class="card"><h2>Zona pericolosa</h2>
+    <button class="b sec" onclick="reloadSeed()">↺ Ricarica rose iniziali</button>
+    <button class="b dang" onclick="resetAll()">Azzera tutto</button>
+  </div>
+</section>
+</main>
+
+<script>
+const SEED = [{"nome":"Ichnusa","pres":"","budget":500,"crediti":140,"rosa":[{"id":"p001","nome":"Bijlow","rm":"Por","ruolo":"P","club":"Genoa","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p002","nome":"Grabara","rm":"Por","ruolo":"P","club":"Juventus","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p003","nome":"Vicario","rm":"Por","ruolo":"P","club":"Juventus","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p004","nome":"Bella Kotchap","rm":"Dc","ruolo":"D","club":"Venezia","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p005","nome":"Comuzzo","rm":"Dc","ruolo":"D","club":"Torino","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p006","nome":"Scalvini","rm":"Dc","ruolo":"D","club":"Atalanta","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p007","nome":"Dragusin","rm":"Dc","ruolo":"D","club":"Fiorentina","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p008","nome":"Beukema","rm":"Dc","ruolo":"D","club":"Napoli","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p009","nome":"Couto","rm":"Dd;E","ruolo":"D","club":"Como","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p010","nome":"Dodo","rm":"Dd;E","ruolo":"D","club":"Fiorentina","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p011","nome":"Bernasconi","rm":"Ds;E","ruolo":"D","club":"Atalanta","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p012","nome":"Kamara","rm":"Ds;E","ruolo":"D","club":"Udinese","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p013","nome":"Kolasinac","rm":"Ds;Dc","ruolo":"D","club":"Atalanta","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p014","nome":"M. Keita","rm":"M;C","ruolo":"C","club":"Parma","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p015","nome":"M.Kone","rm":"M;C","ruolo":"C","club":"Roma","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p016","nome":"Rovella","rm":"M;C","ruolo":"C","club":"Lazio","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p017","nome":"Oulai","rm":"M;C","ruolo":"C","club":"Fiorentina","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p018","nome":"Piotrowski","rm":"M;C","ruolo":"C","club":"Udinese","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p019","nome":"Douglas Luis","rm":"C","ruolo":"C","club":"Juventus","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p020","nome":"Koopmeiners","rm":"C;T","ruolo":"C","club":"Juventus","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p021","nome":"Pisilli","rm":"C","ruolo":"C","club":"Roma","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p022","nome":"Samardzic","rm":"C;T","ruolo":"C","club":"Atalanta","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p023","nome":"K.Thuram","rm":"C","ruolo":"C","club":"Juventus","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p024","nome":"Zaniolo","rm":"T;A","ruolo":"C","club":"Atalanta","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p025","nome":"Fernandez","rm":"T;A","ruolo":"C","club":"Venezia","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p026","nome":"El Shaarawy","rm":"W","ruolo":"C","club":"Genoa","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p027","nome":"Ghedjemis","rm":"W;A","ruolo":"C","club":"Frosinone","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p028","nome":"Dybala","rm":"A","ruolo":"A","club":"Roma","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p029","nome":"Soule","rm":"A","ruolo":"A","club":"Roma","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p030","nome":"Zeballos","rm":"A","ruolo":"A","club":"Monza","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p031","nome":"Dovbyk","rm":"Pc","ruolo":"A","club":"Bologna","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p032","nome":"Ramos","rm":"Pc","ruolo":"A","club":"Milan","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"}]},{"nome":"ASOT","pres":"","budget":500,"crediti":170,"rosa":[{"id":"p033","nome":"Caprile","rm":"Por","ruolo":"P","club":"Cagliari","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p034","nome":"De Gea","rm":"Por","ruolo":"P","club":"Fiorentina","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p035","nome":"Skorupski","rm":"Por","ruolo":"P","club":"Bologna","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p036","nome":"Marusic","rm":"Dd;Ds;E","ruolo":"D","club":"Lazio","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p037","nome":"Bellanova","rm":"Dd;E","ruolo":"D","club":"Atalanta","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p038","nome":"Jimenez","rm":"Dd;Ds;E","ruolo":"D","club":"Fiorentina","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p039","nome":"Zappacosta","rm":"Dd;E","ruolo":"D","club":"Atalanta","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p040","nome":"Tavares","rm":"Ds;E","ruolo":"D","club":"Lazio","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p041","nome":"De Winter","rm":"Dd;Dc","ruolo":"D","club":"Milan","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p042","nome":"N'Dicka","rm":"Dc","ruolo":"D","club":"Roma","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p043","nome":"Idzes","rm":"Dc","ruolo":"D","club":"Sassuolo","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p044","nome":"Lucumi","rm":"Dc","ruolo":"D","club":"Bologna","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p045","nome":"Rrahmani","rm":"Dc","ruolo":"D","club":"Napoli","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p046","nome":"Tiago Gabriel","rm":"Dc","ruolo":"D","club":"Lecce","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p047","nome":"Ederson","rm":"M;C","ruolo":"C","club":"Atalanta","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p048","nome":"Gaetano","rm":"M;C","ruolo":"C","club":"Atalanta","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p049","nome":"Jashari","rm":"M;C","ruolo":"C","club":"Milan","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p050","nome":"Stankovic","rm":"M;C","ruolo":"C","club":"Inter","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p051","nome":"Sucic","rm":"C","ruolo":"C","club":"Inter","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p052","nome":"Bakola","rm":"C;T","ruolo":"C","club":"Sassuolo","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p053","nome":"Barella","rm":"C","ruolo":"C","club":"Inter","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p054","nome":"Zielinski","rm":"C","ruolo":"C","club":"Inter","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p055","nome":"Da Cunha","rm":"C;T","ruolo":"C","club":"Como","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p056","nome":"Zaccagni","rm":"W;A","ruolo":"C","club":"Lazio","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p057","nome":"Alajbegovic","rm":"W;T","ruolo":"C","club":"Juventus","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p058","nome":"Pulisic","rm":"T;A","ruolo":"C","club":"Milan","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p059","nome":"Berardi","rm":"A","ruolo":"A","club":"Sassuolo","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p060","nome":"De Ketaleare","rm":"A","ruolo":"A","club":"Atalanta","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p061","nome":"Lucca","rm":"Pc","ruolo":"A","club":"Napoli","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p062","nome":"P.Esposito","rm":"Pc","ruolo":"A","club":"Inter","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p063","nome":"Hojlund","rm":"Pc","ruolo":"A","club":"Napoli","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p064","nome":"Castro","rm":"Pc","ruolo":"A","club":"Bologna","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"}]},{"nome":"ASAP","pres":"","budget":500,"crediti":192,"rosa":[{"id":"p065","nome":"Motta","rm":"Por","ruolo":"P","club":"Lazio","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p066","nome":"Provedel","rm":"Por","ruolo":"P","club":"Inter","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p067","nome":"Falcone","rm":"Por","ruolo":"P","club":"Pisa","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p068","nome":"Gabbia","rm":"Dc","ruolo":"D","club":"Milan","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p069","nome":"Gila","rm":"Dc","ruolo":"D","club":"Milan","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p070","nome":"Kempf","rm":"Dc","ruolo":"D","club":"Como","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p071","nome":"Diego Carlos","rm":"Dc","ruolo":"D","club":"Como","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p072","nome":"Ismajli","rm":"Dc","ruolo":"D","club":"Torino","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p073","nome":"Prosvstgaard","rm":"Dc","ruolo":"D","club":"Lazio","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p074","nome":"Di Lorenzo","rm":"Dd;E","ruolo":"D","club":"Napoli","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p075","nome":"Kalulu","rm":"Dd;Dc","ruolo":"D","club":"Juventus","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p076","nome":"Heggem","rm":"Ds;Dc","ruolo":"D","club":"Bologna","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p077","nome":"Valle","rm":"Ds;E","ruolo":"D","club":"Como","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p078","nome":"Laysen","rm":"Ds;Dc","ruolo":"D","club":"Sassuolo","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p079","nome":"Luis Henrique","rm":"E;W","ruolo":"D","club":"Inter","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p080","nome":"Matic","rm":"M;C","ruolo":"C","club":"Sassuolo","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p081","nome":"Milla","rm":"M;C","ruolo":"C","club":"Como","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p082","nome":"Ricci","rm":"M;C","ruolo":"C","club":"Como","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p083","nome":"Sow","rm":"M;C","ruolo":"C","club":"Genoa","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p084","nome":"Akinsanmiro","rm":"C","ruolo":"C","club":"Monza","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p085","nome":"C.Jones","rm":"C","ruolo":"C","club":"Inter","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p086","nome":"Kessie","rm":"C","ruolo":"C","club":"Atalanta","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p087","nome":"Loftus Cheek","rm":"C;T","ruolo":"C","club":"Milan","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p088","nome":"Pasalic","rm":"C;T","ruolo":"C","club":"Atalanta","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p089","nome":"Vlasic","rm":"T","ruolo":"C","club":"Torino","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p090","nome":"Conceicao","rm":"W;A","ruolo":"C","club":"Juventus","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p091","nome":"Zhegrova","rm":"W","ruolo":"C","club":"Juventus","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p092","nome":"Yildiz","rm":"A","ruolo":"A","club":"Juventus","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p093","nome":"Beto","rm":"Pc","ruolo":"A","club":"Fiorentina","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p094","nome":"Krstovic","rm":"Pc","ruolo":"A","club":"Atalanta","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p095","nome":"E.Toure","rm":"Pc","ruolo":"A","club":"Parma","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p096","nome":"Varela","rm":"Pc","ruolo":"A","club":"Monza","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"}]},{"nome":"REAL MADRINK","pres":"","budget":500,"crediti":87,"rosa":[{"id":"p097","nome":"Torriani","rm":"Por","ruolo":"P","club":"Milan","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p098","nome":"Maignan","rm":"Por","ruolo":"P","club":"Milan","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p099","nome":"Terracciano","rm":"Por","ruolo":"P","club":"Milan","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p100","nome":"Veiga","rm":"Dd;E","ruolo":"D","club":"Lecce","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p101","nome":"Walukiewicz","rm":"Dd;Dc","ruolo":"D","club":"Sassuolo","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p102","nome":"Obrador","rm":"Ds;E","ruolo":"D","club":"Sassuolo","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p103","nome":"Spinazzola","rm":"Ds;E","ruolo":"D","club":"Napoli","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p104","nome":"Buongiorno","rm":"Dc","ruolo":"D","club":"Napoli","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p105","nome":"Vitik","rm":"Dc","ruolo":"D","club":"Bologna","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p106","nome":"Coco","rm":"Dc","ruolo":"D","club":"Torino","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p107","nome":"Pavlovic","rm":"Dc","ruolo":"D","club":"Milan","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p108","nome":"Mina","rm":"Dc","ruolo":"D","club":"Cagliari","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p109","nome":"Olivera","rm":"Ds;E;B","ruolo":"D","club":"Napoli","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p110","nome":"Chukwueze","rm":"E;W","ruolo":"D","club":"Milan","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p111","nome":"Dimarco","rm":"E;W","ruolo":"D","club":"Inter","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p112","nome":"Wesley","rm":"E","ruolo":"D","club":"Roma","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p113","nome":"Lobotka","rm":"M;C","ruolo":"C","club":"Napoli","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p114","nome":"Locatelli","rm":"M;C","ruolo":"C","club":"Juventus","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p115","nome":"Pobega","rm":"M;C","ruolo":"C","club":"Bologna","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p116","nome":"Ekkelenkamp","rm":"C;T","ruolo":"C","club":"Udinese","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p117","nome":"Casadei","rm":"C;T","ruolo":"C","club":"Torino","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p118","nome":"Boga","rm":"W;A","ruolo":"C","club":"Juventus","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p119","nome":"Odgaard","rm":"T","ruolo":"C","club":"Bologna","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p120","nome":"Baturina","rm":"T","ruolo":"C","club":"Como","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p121","nome":"Politano","rm":"W","ruolo":"C","club":"Napoli","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p122","nome":"Neres","rm":"W;A","ruolo":"C","club":"Napoli","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p123","nome":"Alisson Santos","rm":"W;A","ruolo":"C","club":"Napoli","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p124","nome":"Lauriente","rm":"A","ruolo":"A","club":"Sassuolo","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p125","nome":"Vitinha","rm":"Pc","ruolo":"A","club":"Genoa","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p126","nome":"Camarda","rm":"Pc","ruolo":"A","club":"Milan","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p127","nome":"Kolo Muani","rm":"Pc","ruolo":"A","club":"Juventus","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p128","nome":"Pellegrino","rm":"Pc","ruolo":"A","club":"Parma","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"}]},{"nome":"Il Contribuente","pres":"","budget":500,"crediti":215,"rosa":[{"id":"p129","nome":"Milinkovic Savic","rm":"Por","ruolo":"P","club":"Napoli","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p130","nome":"Meret","rm":"Por","ruolo":"P","club":"Napoli","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p131","nome":"Sanchez","rm":"Por","ruolo":"P","club":"Como","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p132","nome":"Del Prato","rm":"Dd;E;B","ruolo":"D","club":"Parma","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p133","nome":"Mercandalli","rm":"Dc","ruolo":"D","club":"Genoa","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p134","nome":"Bremer","rm":"Dc","ruolo":"D","club":"Juventus","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p135","nome":"Solet","rm":"Dc","ruolo":"D","club":"Udinese","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p136","nome":"Ostigard","rm":"Dc","ruolo":"D","club":"Genoa","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p137","nome":"Belghali","rm":"Dd;E","ruolo":"D","club":"Torino","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p138","nome":"Helland","rm":"Dd;Dc","ruolo":"D","club":"Bologna","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p139","nome":"Kaiki","rm":"Ds;E","ruolo":"D","club":"Como","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p140","nome":"Mangas","rm":"Ds;E","ruolo":"D","club":"Monza","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p141","nome":"Vasquez","rm":"Ds;Dc","ruolo":"D","club":"Genoa","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p142","nome":"Moreira","rm":"E;W","ruolo":"D","club":"Milan","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p143","nome":"Busio","rm":"M;C","ruolo":"C","club":"Venezia","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p144","nome":"Calhanoglu","rm":"M;C","ruolo":"C","club":"Inter","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p145","nome":"Fagioli","rm":"M;C","ruolo":"C","club":"Fiorentina","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p146","nome":"Pessina","rm":"M;C","ruolo":"C","club":"Monza","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p147","nome":"Adzic","rm":"C;T","ruolo":"C","club":"Sassuolo","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p148","nome":"McTominay","rm":"C;T","ruolo":"C","club":"Napoli","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p149","nome":"Anguissa","rm":"C","ruolo":"C","club":"Napoli","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p150","nome":"McKennie","rm":"C;T","ruolo":"C","club":"Juventus","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p151","nome":"Liberali","rm":"T","ruolo":"C","club":"Como","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p152","nome":"Nico Paz","rm":"T;A","ruolo":"C","club":"Como","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p153","nome":"Isaksen","rm":"W;A","ruolo":"C","club":"Lazio","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p154","nome":"Rowe","rm":"W;T","ruolo":"C","club":"Bologna","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p155","nome":"Hutchinson","rm":"W;A","ruolo":"C","club":"Milan","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p156","nome":"Mastantuono","rm":"W;T","ruolo":"C","club":"Fiorentina","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p157","nome":"Woltemade","rm":"A","ruolo":"A","club":"Juventus","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p158","nome":"Bonny","rm":"Pc","ruolo":"A","club":"Inter","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p159","nome":"Malen","rm":"A","ruolo":"A","club":"Roma","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p160","nome":"Colombo","rm":"Pc","ruolo":"A","club":"Genoa","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"}]},{"nome":"Paulcellona","pres":"","budget":500,"crediti":186,"rosa":[{"id":"p161","nome":"Svilar","rm":"Por","ruolo":"P","club":"Roma","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p162","nome":"Gollini","rm":"Por","ruolo":"P","club":"Roma","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p163","nome":"Okoye","rm":"Por","ruolo":"P","club":"Udinese","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p164","nome":"Bisseck","rm":"Dc","ruolo":"D","club":"Inter","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p165","nome":"Ramon","rm":"Dc","ruolo":"D","club":"Como","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p166","nome":"Britschi","rm":"Dd;Ds;E","ruolo":"D","club":"Parma","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p167","nome":"Stones","rm":"Dc","ruolo":"D","club":"Inter","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p168","nome":"Holm","rm":"Dd;E","ruolo":"D","club":"Bologna","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p169","nome":"Hien","rm":"Dc","ruolo":"D","club":"Atalanta","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p170","nome":"Pavard","rm":"Dd;Dc","ruolo":"D","club":"Inter","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p171","nome":"Zortea","rm":"Dd;E","ruolo":"D","club":"Bologna","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p172","nome":"Kelly","rm":"Ds;Dc","ruolo":"D","club":"Juventus","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p173","nome":"Valeri","rm":"Ds;E","ruolo":"D","club":"Parma","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p174","nome":"Theate","rm":"Ds;Dc","ruolo":"D","club":"Bologna","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p175","nome":"Valdepenas","rm":"Ds;Dc","ruolo":"D","club":"Fiorentina","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p176","nome":"Spence","rm":"E","ruolo":"D","club":"Inter","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p177","nome":"Cataldi","rm":"M;C","ruolo":"C","club":"Lazio","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p178","nome":"Cristante","rm":"M;C","ruolo":"C","club":"Roma","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p179","nome":"Mandragora","rm":"C","ruolo":"C","club":"Fiorentina","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p180","nome":"Karlstrom","rm":"M;C","ruolo":"C","club":"Udinese","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p181","nome":"Perrone","rm":"M;C","ruolo":"C","club":"Como","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p182","nome":"Bernabè","rm":"C","ruolo":"C","club":"Parma","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p183","nome":"Taylor","rm":"C;T","ruolo":"C","club":"Lazio","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p184","nome":"Mora","rm":"T","ruolo":"C","club":"Roma","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p185","nome":"Rodriguez Je","rm":"W;A","ruolo":"C","club":"Como","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p186","nome":"Cisse","rm":"W;T","ruolo":"C","club":"Milan","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p187","nome":"Gudmunsson","rm":"T;A","ruolo":"C","club":"Fiorentina","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p188","nome":"Orsolini","rm":"W;A","ruolo":"C","club":"Bologna","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p189","nome":"Esposito S","rm":"A","ruolo":"A","club":"Cagliari","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p190","nome":"Davis K.","rm":"Pc","ruolo":"A","club":"Udinese","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p191","nome":"A.Adams","rm":"Pc","ruolo":"A","club":"Venezia","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p192","nome":"Thuram","rm":"Pc","ruolo":"A","club":"Inter","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"}]},{"nome":"Deportivo Aperitivo","pres":"","budget":500,"crediti":3,"rosa":[{"id":"p193","nome":"Carnesecchi","rm":"Por","ruolo":"P","club":"Atalanta","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p194","nome":"Sportiello","rm":"Por","ruolo":"P","club":"Atalanta","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p195","nome":"Perri","rm":"Por","ruolo":"P","club":"Torino","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p196","nome":"Bastoni","rm":"Dc","ruolo":"D","club":"Inter","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p197","nome":"Doekhi","rm":"Dc","ruolo":"D","club":"Lazio","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p198","nome":"Troilo","rm":"Dc","ruolo":"D","club":"Parma","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p199","nome":"Mancini","rm":"Dc","ruolo":"D","club":"Roma","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p200","nome":"Chalobah","rm":"Dd;Dc","ruolo":"D","club":"Como","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p201","nome":"Carlos Augusto","rm":"B;Ds;E","ruolo":"D","club":"Inter","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p202","nome":"Vojvoda","rm":"Dd;E","ruolo":"D","club":"Torino","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p203","nome":"Cambiaso","rm":"Dd;Ds;E","ruolo":"D","club":"Juventus","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p204","nome":"Celik","rm":"Dd;B;E","ruolo":"D","club":"Juventus","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p205","nome":"Diouf","rm":"E;C","ruolo":"D","club":"Inter","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p206","nome":"Saelemaekers","rm":"E;W","ruolo":"D","club":"Milan","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p207","nome":"Molina","rm":"E","ruolo":"D","club":"Roma","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p208","nome":"Basic","rm":"M;C","ruolo":"C","club":"Venezia","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p209","nome":"Coulibaly","rm":"M;C","ruolo":"C","club":"Lecce","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p210","nome":"De Roon","rm":"M;C","ruolo":"C","club":"Roma","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p211","nome":"Ferguson","rm":"M;C","ruolo":"C","club":"Bologna","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p212","nome":"Romano","rm":"M;C","ruolo":"C","club":"Cagliari","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p213","nome":"Fabbian","rm":"C;T","ruolo":"C","club":"Bologna","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p214","nome":"Frattesi","rm":"C;T","ruolo":"C","club":"Lazio","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p215","nome":"Ndour","rm":"C","ruolo":"C","club":"Fiorentina","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p216","nome":"Rabiot","rm":"C;T","ruolo":"C","club":"Milan","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p217","nome":"Baldanzi","rm":"T","ruolo":"C","club":"Genoa","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p218","nome":"Diao","rm":"W;A","ruolo":"C","club":"Como","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p219","nome":"Goncalves","rm":"W;T","ruolo":"C","club":"Fiorentina","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p220","nome":"Raspadori","rm":"A","ruolo":"A","club":"Atalanta","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p221","nome":"Lautaro","rm":"Pc","ruolo":"A","club":"Inter","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p222","nome":"Bowie","rm":"Pc","ruolo":"A","club":"Sassuolo","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p223","nome":"Pinamonti","rm":"Pc","ruolo":"A","club":"Lazio","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p224","nome":"Douvikas","rm":"Pc","ruolo":"A","club":"Como","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"}]},{"nome":"SCArsenal","pres":"","budget":500,"crediti":129,"rosa":[{"id":"p225","nome":"Butez","rm":"Por","ruolo":"P","club":"Como","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p226","nome":"Mandas","rm":"Por","ruolo":"P","club":"Lazio","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p227","nome":"Martinez","rm":"Por","ruolo":"P","club":"Inter","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p228","nome":"Koulierakis","rm":"Dc","ruolo":"D","club":"Roma","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p229","nome":"Hermoso","rm":"Dc","ruolo":"D","club":"Roma","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p230","nome":"Sutalo","rm":"Dc","ruolo":"D","club":"Lazio","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p231","nome":"Akanji","rm":"Dc","ruolo":"D","club":"Inter","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p232","nome":"Kossounou","rm":"Dd;Dc","ruolo":"D","club":"Atalanta","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p233","nome":"Birindelli","rm":"Dd;Ds;E","ruolo":"D","club":"Monza","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p234","nome":"Bartesaghi","rm":"Ds;E","ruolo":"D","club":"Milan","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p235","nome":"Kristensen","rm":"Dd;Dc","ruolo":"D","club":"Udinese","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p236","nome":"Miranda","rm":"Ds;E","ruolo":"D","club":"Bologna","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p237","nome":"Bracaglia","rm":"Ds;E","ruolo":"D","club":"Frosinone","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p238","nome":"Calò","rm":"M;C","ruolo":"C","club":"Frosinone","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p239","nome":"Fitz Jim","rm":"M;C","ruolo":"C","club":"Torino","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p240","nome":"Ilic","rm":"M;C","ruolo":"C","club":"Lecce","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p241","nome":"Frendrup","rm":"M;C","ruolo":"C","club":"Genoa","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p242","nome":"Adopo","rm":"M;C","ruolo":"C","club":"Cagliari","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p243","nome":"Modric","rm":"M;C","ruolo":"C","club":"Milan","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p244","nome":"Sarr","rm":"M;C","ruolo":"C","club":"Juventus","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p245","nome":"Thorsvedt","rm":"C;T","ruolo":"C","club":"Sassuolo","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p246","nome":"Atta","rm":"C;T","ruolo":"C","club":"Udinese","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p247","nome":"De Bruyne","rm":"T","ruolo":"C","club":"Napoli","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p248","nome":"Nico gonzales","rm":"W;A","ruolo":"C","club":"Juventus","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p249","nome":"Volpato","rm":"W;T","ruolo":"C","club":"Sassuolo","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p250","nome":"Vergara","rm":"W;T;A","ruolo":"C","club":"Napoli","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p251","nome":"Simeone","rm":"Pc","ruolo":"A","club":"Torino","scad":2028,"anni":2,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2028"},{"id":"p252","nome":"Adams","rm":"A","ruolo":"A","club":"Torino","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p253","nome":"Piccoli","rm":"Pc","ruolo":"A","club":"Genoa","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p254","nome":"Raimondo","rm":"Pc","ruolo":"A","club":"Frosinone","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"},{"id":"p255","nome":"Kean","rm":"Pc","ruolo":"A","club":"Fiorentina","scad":2027,"anni":1,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2027"},{"id":"p256","nome":"Scamacca","rm":"Pc","ruolo":"A","club":"Atalanta","scad":2029,"anni":3,"valore":null,"dal":"2026/27","note":"contratto in scadenza 30/06/2029"}]}];
+const LS='fantacontratti-mantra-v1';
+const nid=()=>Math.random().toString(36).slice(2,10);
+let S=null, sync={url:'',code:'',auto:1}, sel={A:new Set(),B:new Set()};
+
+/* ---- ruoli mantra ---- */
+const MANTRA=['Por','Dc','Dd','Ds','B','E','M','C','T','W','A','Pc'];
+const GRP={Por:'P',Dc:'D',Dd:'D',Ds:'D',B:'D',E:'D',M:'C',C:'C',T:'C',W:'C',A:'A',Pc:'A'};
+const RORD={}; MANTRA.forEach((r,i)=>RORD[r]=i);
+function rmList(p){ return String(p.rm||'').split(';').filter(Boolean) }
+function rmSort(p){ const l=rmList(p); return l.length?Math.min(...l.map(r=>RORD[r]??99)):99 }
+function rmBadges(p){ return '<span class="rm">'+rmList(p).map(r=>`<b class="g-${GRP[r]||'C'}">${r}</b>`).join('')+'</span>' }
+function normRm(s){ return String(s).split(/[;,:\s]+/).map(x=>{const f=MANTRA.find(m=>m.toLowerCase()===x.toLowerCase());return f||''}).filter(Boolean).join(';') }
+
+function seedState(){
+  return {lega:'FantaZenaMilano', stagione:'2026/27', anni:3,
+    squadre:SEED.map(t=>({id:nid(),nome:t.nome,pres:t.pres||'',crediti:t.crediti||0,budget:t.budget||500,
+      rosa:t.rosa.map(p=>({...p,id:nid()}))})),
+    svincolati:[], log:[{t:'Rose e scadenze importate dal file di settembre 2026, con ruoli mantra.',d:new Date().toISOString(),s:'2026/27'}], prev:null};
+}
+function load(){ try{S=JSON.parse(localStorage.getItem(LS))}catch(e){} if(!S||!S.squadre)S=seedState();
+  try{const y=JSON.parse(localStorage.getItem(LS+'-sync'));if(y)sync=y}catch(e){} }
+function save(push=true){ localStorage.setItem(LS,JSON.stringify(S)); render(); if(push&&sync.url&&sync.code&&sync.auto==1)cloudSave(0); }
+function log(t){ S.log.unshift({t,d:new Date().toISOString(),s:S.stagione}); }
+function toast(m,err){ const d=document.createElement('div');d.className='toast';d.textContent=m;
+  if(err){d.style.background='#ff5a5a';d.style.color='#fff'} document.body.appendChild(d); setTimeout(()=>d.remove(),2200); }
+function team(id){ return S.squadre.find(t=>t.id===id) }
+function fmtD(s){ const d=new Date(s); return d.toLocaleDateString('it-IT')+' '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}) }
+function tmLink(n){ return 'https://www.transfermarkt.it/schnellsuche/ergebnis/schnellsuche?query='+encodeURIComponent(n) }
+function val(p){ return typeof p.valore==='number'?p.valore:null }
+function teamVal(t){ return t.rosa.reduce((s,p)=>s+(val(p)||0),0) }
+function seasonEnd(){ const m=String(S.stagione).match(/(\d{4})/); return m?+m[1]+1:2027 }
+function scadOf(p){ return seasonEnd()+ (p.anni-1) }
+
+/* ---------- CLOUD ---------- */
+function ep(){ return sync.url.replace(/\/$/,'')+'/leghe/'+encodeURIComponent(sync.code)+'.json' }
+async function cloudSave(manual){
+  if(!sync.url||!sync.code){ if(manual)toast('Sync non configurata (Impostazioni)',1); return }
+  try{ const r=await fetch(ep(),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(S)});
+    if(!r.ok)throw 0; setDot('ok','sincronizzato'); if(manual)toast('Salvato sul cloud');
+  }catch(e){ setDot('err','errore sync'); if(manual)toast('Errore salvataggio',1) } }
+async function cloudLoad(manual){
+  if(!sync.url||!sync.code){ if(manual)toast('Sync non configurata (Impostazioni)',1); return }
+  try{ const r=await fetch(ep()+'?t='+Date.now()); const j=await r.json();
+    if(j&&j.squadre){ S=j; localStorage.setItem(LS,JSON.stringify(S)); render(); setDot('ok','sincronizzato'); if(manual)toast('Dati caricati dal cloud'); }
+    else if(manual)toast('Nessun dato sul cloud per questo codice',1);
+  }catch(e){ setDot('err','errore sync'); if(manual)toast('Errore caricamento',1) } }
+function setDot(c,t){ document.getElementById('dot').className='dot '+(c||''); document.getElementById('syncTxt').textContent=t }
+function saveSync(){ sync={url:cfgUrl.value.trim(),code:cfgCode.value.trim(),auto:cfgAuto.value};
+  localStorage.setItem(LS+'-sync',JSON.stringify(sync));
+  if(sync.url&&sync.code){ setDot('','collegamento…'); cloudLoad(1) } else { setDot('','locale'); toast('Modalità locale') } }
+
+/* ---------- AZIONI ---------- */
+function acquista(){
+  const t=team(aTeam.value); if(!t)return toast('Scegli una squadra',1);
+  const n=aName.value.trim(); if(!n)return toast('Inserisci il nome',1);
+  const r=normRm(aRm.value); if(!r)return toast('Ruolo mantra non valido',1);
+  const y=+aYears.value, c=+aCost.value||0, v=aVal.value===''?null:+aVal.value;
+  t.rosa.push({id:nid(),nome:n,rm:r,ruolo:GRP[r.split(';')[0]]||'C',club:aClub.value.trim(),
+    anni:y,valore:v,dal:S.stagione,note:aSess.value+' '+S.stagione});
+  t.crediti-=c;
+  S.svincolati=S.svincolati.filter(p=>p.nome.toLowerCase()!==n.toLowerCase());
+  log(`${aSess.value}: ${t.nome} acquista ${n} (${r}) per ${c} crediti — contratto ${y} anni`);
+  aName.value='';aClub.value='';aRm.value='';aCost.value=1;aVal.value=''; save(); toast(n+' → '+t.nome); }
+function svincola(tid,pid){ const t=team(tid),i=t.rosa.findIndex(p=>p.id===pid); if(i<0)return;
+  const p=t.rosa.splice(i,1)[0]; S.svincolati.unshift({...p,da:t.nome,quando:S.stagione});
+  log(`Svincolo: ${t.nome} libera ${p.nome}`); save(); toast(p.nome+' svincolato'); }
+function elimina(tid,pid){ const t=team(tid),i=t.rosa.findIndex(p=>p.id===pid); if(i<0)return;
+  const p=t.rosa.splice(i,1)[0]; log(`Rimosso: ${p.nome} (${t.nome})`); save(); }
+function setF(tid,pid,f,v){ const p=team(tid).rosa.find(x=>x.id===pid); if(!p)return;
+  if(f==='anni'){ const o=p.anni; p.anni=Math.max(0,+v||0); log(`Contratto ${p.nome} (${team(tid).nome}): ${o} → ${p.anni} anni`); }
+  else if(f==='valore'){ p.valore=v===''?null:+v }
+  else if(f==='rm'){ const r=normRm(v); if(!r)return toast('Ruolo mantra non valido',1);
+    p.rm=r; p.ruolo=GRP[r.split(';')[0]]||'C'; log(`Ruolo ${p.nome}: ${r}`); }
+  else p[f]=v;
+  save(); }
+function scambia(){
+  const a=team(sA.value),b=team(sB.value);
+  if(!a||!b||a.id===b.id)return toast('Scegli due squadre diverse',1);
+  const pa=[...sel.A],pb=[...sel.B];
+  if(!pa.length&&!pb.length)return toast('Seleziona almeno un giocatore',1);
+  const mA=pa.map(id=>a.rosa.find(p=>p.id===id)).filter(Boolean), mB=pb.map(id=>b.rosa.find(p=>p.id===id)).filter(Boolean);
+  a.rosa=a.rosa.filter(p=>!pa.includes(p.id)); b.rosa=b.rosa.filter(p=>!pb.includes(p.id));
+  mA.forEach(p=>{p.anni=S.anni;p.dal=S.stagione;p.note='scambio '+S.stagione;b.rosa.push(p)});
+  mB.forEach(p=>{p.anni=S.anni;p.dal=S.stagione;p.note='scambio '+S.stagione;a.rosa.push(p)});
+  const c=+sCred.value||0; if(c){a.crediti-=c;b.crediti+=c}
+  log(`Scambio ${a.nome} ⇄ ${b.nome}: [${mA.map(p=>p.nome).join(', ')||'—'}] → ${b.nome} | [${mB.map(p=>p.nome).join(', ')||'—'}] → ${a.nome}${c?` | conguaglio ${c} cr`:''} — contratti a ${S.anni} anni`);
+  sel.A.clear();sel.B.clear();sCred.value=0; save(); toast('Scambio registrato'); }
+function fineStagione(){
+  if(!confirm('Chiudere la stagione '+S.stagione+'? Tutti i contratti scaleranno di 1 anno.'))return;
+  S.prev=JSON.parse(JSON.stringify({squadre:S.squadre,stagione:S.stagione}));
+  S.squadre.forEach(t=>t.rosa.forEach(p=>p.anni=Math.max(0,p.anni-1)));
+  const m=String(S.stagione).match(/(\d{4})\s*\/\s*(\d{2,4})/);
+  S.stagione=m?`${+m[1]+1}/${String(+m[2]+1).padStart(m[2].length,'0')}`:(isNaN(+S.stagione)?S.stagione:String(+S.stagione+1));
+  log(`— Chiusura stagione: contratti scalati di 1 anno. Nuova stagione ${S.stagione} —`); save(); toast('Stagione chiusa → '+S.stagione); }
+function annullaStagione(){ if(!S.prev)return toast('Niente da annullare',1);
+  S.squadre=S.prev.squadre;S.stagione=S.prev.stagione;S.prev=null;log('Annullata ultima chiusura di stagione');save();toast('Ripristinato'); }
+function svincolaScaduti(){ let n=0;
+  S.squadre.forEach(t=>{ t.rosa.filter(p=>p.anni<=0).forEach(p=>{n++;S.svincolati.unshift({...p,da:t.nome,quando:S.stagione})});
+    t.rosa=t.rosa.filter(p=>p.anni>0)});
+  if(!n)return toast('Nessun contratto scaduto'); log(`Svincolati ${n} giocatori con contratto scaduto`); save(); toast(n+' svincolati'); }
+function addTeam(){ if(!nTeam.value.trim())return;
+  S.squadre.push({id:nid(),nome:nTeam.value.trim(),pres:nPres.value.trim(),crediti:+nCred.value||0,budget:500,rosa:[]});
+  log('Aggiunta squadra '+nTeam.value.trim()); nTeam.value=nPres.value=''; save(); }
+function delTeam(id){ const t=team(id); if(!confirm('Eliminare '+t.nome+' e la sua rosa?'))return;
+  S.squadre=S.squadre.filter(x=>x.id!==id); log('Eliminata squadra '+t.nome); save(); }
+function saveCfg(){ S.lega=cfgLega.value.trim()||S.lega; S.stagione=cfgStag.value.trim()||S.stagione;
+  S.anni=Math.max(1,+cfgAnni.value||3); save(); toast('Salvato'); }
+function reloadSeed(){ if(!confirm('Ricaricare le rose iniziali? Perderai le modifiche fatte.'))return; S=seedState(); save(); }
+function resetAll(){ if(!confirm('Cancellare TUTTO?'))return;
+  S={lega:'Nuova lega',stagione:'2026/27',anni:3,squadre:[],svincolati:[],log:[],prev:null}; save(); }
+
+/* ---------- IMPORT/EXPORT ---------- */
+function dl(name,txt,type){ const b=new Blob([txt],{type}); const a=document.createElement('a');
+  a.href=URL.createObjectURL(b); a.download=name; a.click(); }
+function exportJSON(){ dl('fantacontratti-'+S.stagione.replace('/','-')+'.json',JSON.stringify(S,null,2),'application/json') }
+function exportCSV(){ const r=['Squadra;Presidente;CreditiResidui;RuoloMantra;Calciatore;SquadraSerieA;ValoreM;AnniResidui;Scadenza'];
+  S.squadre.forEach(t=>t.rosa.forEach(p=>r.push([t.nome,t.pres,t.crediti,p.rm,p.nome,p.club||'',val(p)??'',p.anni,'30/06/'+scadOf(p)].join(';'))));
+  dl('rose-'+S.stagione.replace('/','-')+'.csv','\ufeff'+r.join('\n'),'text/csv'); }
+function exportValCSV(){ const r=['Squadra;Calciatore;ValoreM'];
+  S.squadre.forEach(t=>t.rosa.forEach(p=>r.push([t.nome,p.nome,val(p)??''].join(';'))));
+  dl('valori-transfermarkt.csv','\ufeff'+r.join('\n'),'text/csv'); }
+function importValCSV(el){ const f=el.files[0]; if(!f)return; const rd=new FileReader();
+  rd.onload=()=>{ let n=0;
+    rd.result.split(/\r?\n/).slice(1).forEach(line=>{ const c=line.split(/[;,\t]/); if(c.length<3)return;
+      const nome=(c[1]||'').trim().toLowerCase(), v=parseFloat((c[2]||'').replace(',','.'));
+      if(!nome||isNaN(v))return;
+      S.squadre.forEach(t=>t.rosa.forEach(p=>{ if(p.nome.toLowerCase()===nome){p.valore=v;n++} })); });
+    log(`Importati ${n} valori di mercato da CSV`); save(); toast(n+' valori importati'); };
+  rd.readAsText(f); el.value=''; }
+function importJSON(el){ const f=el.files[0]; if(!f)return; const rd=new FileReader();
+  rd.onload=()=>{ try{ const j=JSON.parse(rd.result); if(!j.squadre)throw 0; S=j; save(); toast('Backup ripristinato') }
+    catch(e){ toast('File non valido',1) } }; rd.readAsText(f); el.value=''; }
+
+/* ---------- RENDER ---------- */
+const ycls=n=>n>=3?'y3':n===2?'y2':n===1?'y1':'y0';
+function render(){
+  bLega.textContent=S.lega; bStag.textContent='Stagione '+S.stagione;
+  const cs=document.getElementById('curSeason'); if(cs)cs.textContent=S.stagione;
+  if(!fRole.options.length) fRole.innerHTML='<option value="">Tutti</option>'+MANTRA.map(r=>`<option>${r}</option>`).join('');
+  const q=(q_.value||'').toLowerCase(), fr=fRole.value, fy=fYr.value, so=fSort.value;
+
+  credBox.innerHTML='<div class="row">'+S.squadre.map(t=>
+    `<span class="pill">${esc(t.nome)} <b style="color:${t.crediti>0?'var(--acc)':'var(--dang)'}">${t.crediti}</b> <span class="muted">/ ${t.budget??500}</span></span>`).join('')+'</div>';
+
+  roseBox.innerHTML='<div class="grid">'+S.squadre.map(t=>{
+    let rosa=t.rosa.filter(p=>(!q||p.nome.toLowerCase().includes(q))&&(!fr||rmList(p).includes(fr))&&
+      (fy===''||(fy==='3'?p.anni>=3:p.anni===+fy)));
+    rosa=rosa.sort((a,b)=> so==='ruolo'?(rmSort(a)-rmSort(b)||a.anni-b.anni||a.nome.localeCompare(b.nome))
+      : so==='anni'?(a.anni-b.anni||rmSort(a)-rmSort(b))
+      : so==='valore'?((val(b)||0)-(val(a)||0))
+      : so==='club'?((a.club||'').localeCompare(b.club||'')||a.nome.localeCompare(b.nome))
+      : a.nome.localeCompare(b.nome));
+    const sc=t.rosa.filter(p=>p.anni<=0).length, tv=teamVal(t);
+    return `<div class="card"><div class="teamhead"><div><b>${esc(t.nome)}</b><div class="muted">${esc(t.pres||'')}</div></div>
+      <div style="text-align:right" class="muted">${t.rosa.length} giocatori<br><b style="color:var(--acc)">${t.crediti} crediti</b>${tv?'<br>valore '+fmtV(tv)+' M€':''}</div></div>
+      ${sc?`<div class="pill" style="margin-bottom:8px;color:var(--dang)">⚠ ${sc} contratto/i scaduto/i</div>`:''}
+      <table><tr><th>Ruolo</th><th>Calciatore</th><th>Sq.</th><th>M€</th><th>Scad.</th><th>Anni</th><th></th></tr>
+      ${rosa.map(p=>`<tr class="${p.anni<=0?'exp':''}" title="${esc(p.note||'')}">
+        <td>${rmBadges(p)}</td>
+        <td>${esc(p.nome)} <a class="tm" target="_blank" rel="noopener" href="${tmLink(p.nome)}" title="Cerca su Transfermarkt">🔎</a></td>
+        <td class="muted">${esc(p.club||'')}</td>
+        <td><input class="vin" type="number" step="0.1" value="${val(p)??''}" placeholder="—" onchange="setF('${t.id}','${p.id}','valore',this.value)"></td>
+        <td class="muted">${p.anni>0?scadOf(p):'—'}</td>
+        <td><input class="yrs ${ycls(p.anni)}" style="width:48px;text-align:center;border:0" type="number" min="0" max="9" value="${p.anni}" onchange="setF('${t.id}','${p.id}','anni',this.value)"></td>
+        <td style="white-space:nowrap"><button class="x" title="Cambia ruolo mantra" onclick="chgRm('${t.id}','${p.id}')">✎</button><button class="x" title="Svincola" onclick="svincola('${t.id}','${p.id}')">⎋</button><button class="x" title="Elimina" onclick="elimina('${t.id}','${p.id}')">✕</button></td></tr>`).join('')
+        ||'<tr><td colspan="7" class="muted">Nessun giocatore</td></tr>'}</table></div>`}).join('')+'</div>';
+
+  const opts=S.squadre.map(t=>`<option value="${t.id}">${esc(t.nome)}</option>`).join('');
+  ['aTeam','sA','sB','vTeam'].forEach(id=>{const e=document.getElementById(id);const v=e.value;e.innerHTML=opts;if(v)e.value=v;});
+  if(sA.value===sB.value&&S.squadre[1])sB.value=S.squadre[1].id;
+  renderSwap(); renderVal();
+
+  freeList.innerHTML=S.svincolati.length?'<table><tr><th>Ruolo</th><th>Calciatore</th><th>Ex squadra</th><th>Dal</th></tr>'+
+    S.svincolati.map(p=>`<tr><td>${rmBadges(p)}</td><td>${esc(p.nome)}</td><td class="muted">${esc(p.da||'')}</td><td class="muted">${esc(p.quando||'')}</td></tr>`).join('')+'</table>':'Nessuno.';
+
+  const l1=[],l0=[];
+  S.squadre.forEach(t=>t.rosa.forEach(p=>{ const s=`${esc(p.nome)} <span class="muted">(${esc(t.nome)})</span>`;
+    if(p.anni===1)l1.push(s); if(p.anni<=0)l0.push(s); }));
+  scad.innerHTML=l1.join(' · ')||'Nessuno.'; scad0.innerHTML=l0.join(' · ')||'Nessuno.';
+
+  tTeams.innerHTML='<tr><th>Squadra</th><th>Presidente</th><th>Budget</th><th>Crediti residui</th><th>Rosa</th><th></th></tr>'+S.squadre.map(t=>
+    `<tr><td><input value="${esc(t.nome)}" onchange="team('${t.id}').nome=this.value;save()"></td>
+     <td><input value="${esc(t.pres||'')}" placeholder="nome presidente" onchange="team('${t.id}').pres=this.value;save()"></td>
+     <td><input type="number" style="width:80px" value="${t.budget??500}" onchange="team('${t.id}').budget=+this.value;save()"></td>
+     <td><input type="number" style="width:90px" value="${t.crediti}" onchange="team('${t.id}').crediti=+this.value;save()"></td>
+     <td class="muted">${t.rosa.length}</td><td><button class="x" onclick="delTeam('${t.id}')">✕</button></td></tr>`).join('');
+
+  cfgLega.value=S.lega; cfgStag.value=S.stagione; cfgAnni.value=S.anni;
+  cfgUrl.value=sync.url; cfgCode.value=sync.code; cfgAuto.value=sync.auto;
+  renderLog();
+}
+function chgRm(tid,pid){ const p=team(tid).rosa.find(x=>x.id===pid);
+  const v=prompt('Ruolo mantra di '+p.nome+' (es. Dd;E oppure M;C):',p.rm); if(v!==null)setF(tid,pid,'rm',v); }
+function fmtV(n){ return (Math.round(n*10)/10).toLocaleString('it-IT') }
+function renderSwap(){
+  let bal={A:0,B:0};
+  ['A','B'].forEach(k=>{ const t=team(document.getElementById('s'+k).value), box=document.getElementById('box'+k);
+    if(!t){box.innerHTML='';return}
+    const rosa=[...t.rosa].sort((a,b)=>rmSort(a)-rmSort(b)||a.nome.localeCompare(b.nome));
+    rosa.forEach(p=>{ if(sel[k].has(p.id)) bal[k]+=val(p)||0 });
+    box.innerHTML=rosa.length?rosa.map(p=>`<label><input type="checkbox" ${sel[k].has(p.id)?'checked':''}
+      onchange="this.checked?sel.${k}.add('${p.id}'):sel.${k}.delete('${p.id}');renderSwap()">
+      ${rmBadges(p)} ${esc(p.nome)} <span class="muted">${esc(p.club||'')}</span><span style="flex:1"></span>
+      <span class="muted">${val(p)!=null?fmtV(val(p))+'M':''}</span> <span class="yrs ${ycls(p.anni)}">${p.anni}a</span></label>`).join('')
+      :'<span class="muted">Rosa vuota</span>'; });
+  const d=bal.A-bal.B;
+  swapBal.innerHTML=`A: ${fmtV(bal.A)} M€ · B: ${fmtV(bal.B)} M€ · <b style="color:${Math.abs(d)<0.01?'var(--acc)':'var(--warn)'}">${d>0?'+':''}${fmtV(d)} M€</b>`;
+}
+function renderVal(){
+  const t=team(vTeam.value); if(!t){valBox.innerHTML='';return}
+  const only=vFilter.value==='empty';
+  const rosa=[...t.rosa].filter(p=>!only||val(p)==null).sort((a,b)=>rmSort(a)-rmSort(b)||a.nome.localeCompare(b.nome));
+  valBox.innerHTML='<table><tr><th>Ruolo</th><th>Calciatore</th><th>Sq.</th><th>Transfermarkt</th><th>Valore M€</th><th>Anni</th></tr>'+
+    rosa.map(p=>`<tr><td>${rmBadges(p)}</td><td>${esc(p.nome)}</td><td class="muted">${esc(p.club||'')}</td>
+      <td><a class="tm" target="_blank" rel="noopener" href="${tmLink(p.nome)}">🔎 apri scheda</a></td>
+      <td><input class="vin" type="number" step="0.1" value="${val(p)??''}" placeholder="—" onchange="setF('${t.id}','${p.id}','valore',this.value)"></td>
+      <td><span class="yrs ${ycls(p.anni)}">${p.anni}</span></td></tr>`).join('')+'</table>';
+  const rank=[...S.squadre].map(x=>({n:x.nome,v:teamVal(x),c:x.rosa.filter(p=>val(p)!=null).length,tot:x.rosa.length}))
+    .sort((a,b)=>b.v-a.v);
+  valRank.innerHTML='<table><tr><th>#</th><th>Squadra</th><th>Valore rosa</th><th>Valorizzati</th></tr>'+
+    rank.map((r,i)=>`<tr><td class="muted">${i+1}</td><td>${esc(r.n)}</td><td><b>${fmtV(r.v)} M€</b></td><td class="muted">${r.c}/${r.tot}</td></tr>`).join('')+'</table>';
+}
+function renderLog(){
+  const f=(document.getElementById('fLog')?.value||'').toLowerCase();
+  logBox.innerHTML=S.log.filter(l=>!f||l.t.toLowerCase().includes(f)).slice(0,300)
+    .map(l=>`<div><span class="muted">${fmtD(l.d)} · ${esc(l.s||'')}</span><br>${esc(l.t)}</div>`).join('')||'<div class="muted">Nessun movimento.</div>';
+}
+function esc(s){ return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])) }
+const q_=document.getElementById('q');
+
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+  document.querySelectorAll('main section').forEach(s=>s.hidden=true);
+  document.getElementById('t-'+b.dataset.t).hidden=false; });
+load(); render();
+if(sync.url&&sync.code){ setDot('','collegamento…'); cloudLoad(0); setInterval(()=>cloudLoad(0),45000) } else setDot('','locale');
+</script>
+</body>
+</html>
